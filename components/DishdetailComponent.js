@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorite } from '../redux/ActionCreators';
 import {postComment} from '../redux/ActionCreators';
+import {addComment} from '../redux/ActionCreators';
 import { Rating } from "react-native-elements";
   const mapStateToProps = state => {
     return {
@@ -50,7 +51,7 @@ function RenderDish(props) {
                    name={ 'pencil'}
                    type='font-awesome'
                    color='#512DA8'
-                   onPress={props.onPressAddComment}
+                   onPress={()=>addComment}
                    />
                    </View>
                 </Card>

@@ -10,7 +10,7 @@ import {
   Modal,
 } from "react-native";
 import { Card } from "react-native-elements";
-import DateTimePicker from 'react-native-datepicker'
+import DateTimePicker from "react-native-datepicker";
 
 class Reservation extends Component {
   constructor(props) {
