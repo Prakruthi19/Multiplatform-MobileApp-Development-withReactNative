@@ -26,18 +26,30 @@ const mapDispatchToProps = dispatch => ({
 
 function RenderDish(props) {
 
-    const dish = props.dish;
+  const  dish = props.dish;
+    handleViewRef = ref => this.view = ref;
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
       if ( dx < -200 )
           return true;
       else
           return false;
   }
+  const recognizeComment = ({dx}) => {
+    if ( dx > 200 )
+        return true;
+    else
+        return false;
+}
 
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gestureState) => {
           return true;
       },
+      onPanResponderGrant: () => {
+        this.view.rubberBand(1000).then(
+          endState => console.log(endState.finished ? 'finished' : 'cancelled'
+          ));
+        },
       onPanResponderEnd: (e, gestureState) => {
           console.log("pan responder end", gestureState);
           if (recognizeDrag(gestureState))
@@ -50,7 +62,9 @@ function RenderDish(props) {
                   ],
                   { cancelable: false }
               );
-
+              else if (recognizeComment(gestureState)) {
+                props.onSelect();
+            }
           return true;
       }
   })
@@ -58,6 +72,7 @@ function RenderDish(props) {
         if (dish != null) {
             return(
                     <Animatable.View animation="fadeInDown" duration={2000} delay={1000}
+                    ref={this.handleViewRef}
                     {...panResponder.panHandlers}>
                 <Card
                 featuredTitle={dish.name}
@@ -81,7 +96,7 @@ function RenderDish(props) {
                    name={ 'pencil'}
                    type='font-awesome'
                    color='#512DA8'
-                   onPress={()=>addComment}
+                   onPress={()=>props.onSelect()}
                    />
                    </View>
                 </Card>
@@ -94,7 +109,6 @@ function RenderDish(props) {
 }
 function RenderComments(props) {
     const comments = props.comments;
-  
     const renderCommentItem = ({ item, index }) => {
       return (
         <View key={index} style={{ margin: 10 }}>
@@ -127,9 +141,10 @@ function RenderComments(props) {
     );
   }
 class Dishdetail extends Component {
-    constructor(props) {
-        super(props);
     
+  constructor(props) {
+        super(props);
+        
         this.state = {
                 favorites: [],
                 showModal: false,
@@ -146,10 +161,10 @@ class Dishdetail extends Component {
     static navigationOptions = {
         title: 'Dish Details'
     };
+     
     toggleModal = () => {
-        this.setState({ showModal: !this.state.showModal });
-      };
-    
+      this.setState({ showModal: !this.state.showModal });
+    };  
       handleReservation() {
         console.log(JSON.stringify(this.state));
         this.toggleModal();
@@ -191,6 +206,7 @@ class Dishdetail extends Component {
             <RenderDish dish={this.props.dishes.dishes[+dishId]}
                 favorite={this.props.favorites.some(el => el === dishId)}
                 onPress={() => this.markFavorite(dishId)} 
+                onSelect = {() => this.toggleModal()}
                 />
       <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)} />
         

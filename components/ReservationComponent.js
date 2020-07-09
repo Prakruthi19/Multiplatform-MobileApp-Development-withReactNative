@@ -1,14 +1,6 @@
 import React, { Component } from "react";
-import {
-  Text,
-  View,
-  ScrollView,
-  StyleSheet,
-  Picker,
-  Switch,
-  Button,
-  Modal,
-} from "react-native";
+import {Text,View,ScrollView,StyleSheet,Picker,Switch,Button,Modal,Alert} from "react-native";
+import * as Animatable from 'react-native-animatable';
 import { Card } from "react-native-elements";
 import DateTimePicker from "react-native-datepicker";
 
@@ -55,7 +47,7 @@ class Reservation extends Component {
       this.setState({ show: true });
     };
     return (
-      <ScrollView>
+      <Animatable.View animation="zoomIn" duration={2000} delay={1000}>
         <View style={styles.formRow}>
           <Text style={styles.formLabel}>Number of Guests</Text>
           <Picker
@@ -110,7 +102,15 @@ class Reservation extends Component {
         </View>
         <View style={styles.formRow}>
           <Button
-            onPress={() => this.handleReservation()}
+            onPress={() => Alert.alert(
+              'Add Favorite',
+              'Number of Guests:'+this.state.guests+ '\nSmoking?'+this.state.smoking +'\nDate and Time:'+this.state.date,           
+                [
+              {text: 'Cancel', onPress: () =>this.resetForm(),style: 'cancel'},
+              {text: 'OK', onPress: () =>this.resetForm()},
+              ],
+              { cancelable: false }
+          )}
             title="Reserve"
             color="#512DA8"
             accessibilityLabel="Learn more about this purple button"
@@ -147,7 +147,7 @@ class Reservation extends Component {
             />
           </View>
         </Modal>
-      </ScrollView>
+      </Animatable.View>
     );
   }
 }
